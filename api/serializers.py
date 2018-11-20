@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Item 
+from .models import (Item, Address )
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -27,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
         ''
             ]
 
+# Items Serializers
 
 class ItemListViewSerializer(serializers.ModelSerializer):
     detail = serializers.HyperlinkedIdentityField(
@@ -82,4 +83,68 @@ class ItemStockUpdateSerializer(serializers.ModelSerializer):
        model = Item
        fields = [
         'stock',
+           ]
+
+
+# Address Serializers 
+
+class AddressListViewSerializer(serializers.ModelSerializer):
+    detail = serializers.HyperlinkedIdentityField(
+        view_name = "api-address-detail",
+        lookup_field = "id",
+        lookup_url_kwarg = "address_id"
+        )
+
+    class Meta:
+        model = Address
+        fields = [  
+        'id',
+        'name',
+        'governorate',
+        'area',
+        'user',
+        'detail'
+
+            ]
+
+class AddressDetailViewSerializer(serializers.ModelSerializer):
+
+ class Meta:
+        model = Address
+        fields = [  
+        'id',
+        'name',
+        'governorate',
+        'area',
+        'block',
+        'street',
+        'house_building',
+        'floor',
+        'appartment',
+        'extra_directions',
+        'default',
+            ]
+ 
+class AddressCreateUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+       model = Address
+       fields = [  
+        'name',
+        'governorate',
+        'area',
+        'block',
+        'street',
+        'house_building',
+        'floor',
+        'appartment',
+        'extra_directions',
+        'default',
+            ]
+
+ 
+class AddressDefaultUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+       model = Address
+       fields = [
+        'default',
            ]
