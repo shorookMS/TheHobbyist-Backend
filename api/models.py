@@ -11,7 +11,7 @@ class Item(models.Model):
 	description = models.TextField()
 	price = models.DecimalField(max_digits=6, decimal_places=3)
 	stock = models.PositiveIntegerField()
-	img = models.CharField(max_length=120)
+	image = models.CharField(max_length=120)
 	rating = models.CharField(max_length=120)
 	category = models.CharField(max_length=1, choices=DEPARTMENT_CHOICE)
 	available = models.BooleanField(default=True)

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-
+from .models import Item 
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -26,76 +26,60 @@ class UserSerializer(serializers.ModelSerializer):
         'email',
         ''
             ]
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = [  
-        'name',
-        'description',
-        'price',
-        'stock',
-        'image',
-        'rating'
-            ]
 
-class ItemListSerializer(serializers.ModelSerializer):
+
+class ItemListViewSerializer(serializers.ModelSerializer):
     detail = serializers.HyperlinkedIdentityField(
         view_name = "api-detail",
         lookup_field = "id",
         lookup_url_kwarg = "item_id"
         )
-    update = serializers.HyperlinkedIdentityField(
-        view_name = "api-update",
-        lookup_field = "id",
-        lookup_url_kwarg = "item_id"
-        )
-    delete = serializers.HyperlinkedIdentityField(
-        view_name = "api-delete",
-        lookup_field = "id",
-        lookup_url_kwarg = "item_id"
-        )
+
     class Meta:
         model = Item
         fields = [  
+        'id',
         'name',
-        'description',
         'price',
-        'stock',
         'image',
-        'rating'
+        'rating',
+        'detail'
+
             ]
 
-class ItemDetailSerializer(serializers.ModelSerializer):
-    update = serializers.HyperlinkedIdentityField(
-        view_name = "api-update",
-        lookup_field = "id",
-        lookup_url_kwarg = "item_id"
-        )
-    delete = serializers.HyperlinkedIdentityField(
-        view_name = "api-delete",
-        lookup_field = "id",
-        lookup_url_kwarg = "item_id"
-        )
-  class Meta:
+class ItemDetailViewSerializer(serializers.ModelSerializer):
+
+ class Meta:
         model = Item
         fields = [  
+        'id',
         'name',
         'description',
         'price',
         'stock',
         'image',
-        'rating'
+        'rating',
+        'category',
+        'available'
             ]
  
-
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = [  
-        'name',
+   class Meta:
+       model = Item
+       fields = [
+       'name',
         'description',
         'price',
         'stock',
         'image',
-        'rating'
-            ]
+        'category',
+        'available'
+           ]
+
+ 
+class ItemStockUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+       model = Item
+       fields = [
+        'stock',
+           ]
