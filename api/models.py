@@ -1,11 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Item(models.Model):
 	DEPARTMENT_CHOICE = (
 		('M', 'Music'),
 		('B', 'Books'),
 		('S', 'Sports'),
-		('A', 'Art')
+		('A', 'Art'),
+		('T', 'Tech'),
 		)
 	name = models.CharField(max_length=120)
 	description = models.TextField()
@@ -16,6 +18,31 @@ class Item(models.Model):
 	category = models.CharField(max_length=1, choices=DEPARTMENT_CHOICE)
 	available = models.BooleanField(default=True)
 	
+
+	def __str__(self):
+		return self.name
+
+class Address(models.Model):
+	GOVERNORATE_CHOICE = (
+		('A', 'Al Asimah Governorate'),
+		('H', 'Hawalli Governorate'),
+		('F', 'Farwaniya Governorate'),
+		('M', 'Mubarak Al-Kabeer Governorate'),
+		('AH', 'Ahmadi Governorate'),
+		('J', 'Jahra Governorate'),
+		)
+	user= models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+	name = models.CharField(max_length=120)
+	governorate = models.CharField(max_length=1, choices=GOVERNORATE_CHOICE)
+	area = models.CharField(max_length=40)
+	block = models.PositiveIntegerField()
+	street = models.CharField(max_length=120)
+	house_building = models.CharField(max_length=40)
+	floor = models.PositiveIntegerField()
+	appartment = models.CharField(max_length=10)
+	extra_directions = models.TextField()
+	default = models.BooleanField(default=False)
+
 
 	def __str__(self):
 		return self.name
