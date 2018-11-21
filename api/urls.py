@@ -11,8 +11,7 @@ from .views import (
 #Imports for Address API
 
 from .views import ( 
-    AddressListAPIView,
-    AddressDetailAPIView, 
+    AddressListAPIView, 
     AddressCreateUpdateAPIView,  
     AddressDefaultUpdateAPIView,
     AddressCreateAPIView)
@@ -39,7 +38,6 @@ urlpatterns = [
     #Address Urls
     path('address/list/', AddressListAPIView.as_view(), name='api-address-list'),
     path('address/create/', AddressCreateAPIView.as_view(), name='api-address-create'),
-    path('address/<int:address_id>/detail/', AddressDetailAPIView.as_view(), name='api-address-detail'),
     path('address/<int:address_id>/update/', AddressCreateUpdateAPIView.as_view(), name='api-address-update'),
     path('address/<int:address_id>/default-update/', AddressDefaultUpdateAPIView.as_view(), name='api-address-default-update'),
      #Order Urls

@@ -1,5 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+class Profile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	phoneNo = models.CharField(max_length=9,null=True)
+	bio = models.TextField(max_length=500)
+	img = models.ImageField(null=True)
+	birth_date = models.DateField(null=True)
+
+	def __str__(self):
+		return self.user.username
+
 
 class Item(models.Model):
 	DEPARTMENT_CHOICE = (
@@ -13,7 +26,7 @@ class Item(models.Model):
 	description = models.TextField()
 	price = models.DecimalField(max_digits=6, decimal_places=3)
 	stock = models.PositiveIntegerField()
-	image = models.CharField(max_length=120)
+	image = models.ImageField(null=True, blank=True)
 	rating = models.CharField(max_length=120)
 	category = models.CharField(max_length=1, choices=DEPARTMENT_CHOICE)
 	available = models.BooleanField(default=True)
@@ -31,9 +44,10 @@ class Address(models.Model):
 		('AH', 'Ahmadi Governorate'),
 		('J', 'Jahra Governorate'),
 		)
-	user= models.ForeignKey(User, default=1,  related_name='user', on_delete=models.CASCADE)
+
+	user = models.ForeignKey(Profile, default=1,  related_name='profile', on_delete=models.CASCADE)
 	name = models.CharField(max_length=120)
-	governorate = models.CharField(max_length=1, choices=GOVERNORATE_CHOICE)
+	governorate = models.CharField(max_length=2, choices=GOVERNORATE_CHOICE)
 	area = models.CharField(max_length=40)
 	block = models.PositiveIntegerField()
 	street = models.CharField(max_length=120)
@@ -54,7 +68,7 @@ class Order(models.Model):
 		('D', 'Delivered')
 		)
 
-	user= models.ForeignKey(User, default=1, related_name='user',  on_delete=models.CASCADE)
+	user= models.ForeignKey(Profile, default=1, related_name='profile',  on_delete=models.CASCADE)
 	date = models.DateField(auto_now_add=True)
 	address = models.ForeignKey(Address, default=1, on_delete=models.CASCADE)
 
@@ -62,3 +76,16 @@ class OrderItem(models.Model):
 	item= models.ForeignKey(Item, default=1, on_delete=models.CASCADE)
 	order=models.ForeignKey(Order, default=1, related_name='item', on_delete=models.CASCADE)
 	quantity=models.PositiveIntegerField()	
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	if created:
+		Profile.objects.create(user=instance)
+
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+# 	instance.profile.save()
+
+
+
