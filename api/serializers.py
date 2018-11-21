@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import (Item, Address )
+from .models import (Item, Address,Order,OrderItem )
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -28,6 +28,18 @@ class UserSerializer(serializers.ModelSerializer):
             ]
 
 # Items Serializers
+class ItemSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Item
+        fields = [  
+        'id',
+        'name',
+        'price',
+        'image',
+        'rating',
+        'detail'
+
+            ]
 
 class ItemListViewSerializer(serializers.ModelSerializer):
     detail = serializers.HyperlinkedIdentityField(
@@ -45,7 +57,6 @@ class ItemListViewSerializer(serializers.ModelSerializer):
         'image',
         'rating',
         'detail'
-
             ]
 
 class ItemDetailViewSerializer(serializers.ModelSerializer):
@@ -87,8 +98,9 @@ class ItemStockUpdateSerializer(serializers.ModelSerializer):
 
 
 # Address Serializers 
-
+# Look at this 
 class AddressListViewSerializer(serializers.ModelSerializer):
+    user = serializers.UserSerializer
     detail = serializers.HyperlinkedIdentityField(
         view_name = "api-address-detail",
         lookup_field = "id",
@@ -100,16 +112,19 @@ class AddressListViewSerializer(serializers.ModelSerializer):
         fields = [  
         'id',
         'name',
-        'governorate',
         'area',
         'user',
         'detail'
-
             ]
 
+    def get_user(self, obj):
+        user=order.user
+        return UserSerializer(user,many=False).data  
+# Remove on review 
 class AddressDetailViewSerializer(serializers.ModelSerializer):
 
- class Meta:
+    user = serializers.UserSerializer
+    class Meta:
         model = Address
         fields = [  
         'id',
@@ -123,6 +138,7 @@ class AddressDetailViewSerializer(serializers.ModelSerializer):
         'appartment',
         'extra_directions',
         'default',
+        'user'
             ]
  
 class AddressCreateUpdateSerializer(serializers.ModelSerializer):
@@ -148,3 +164,77 @@ class AddressDefaultUpdateSerializer(serializers.ModelSerializer):
        fields = [
         'default',
            ]
+
+# Order Serializers 
+class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.UserSerializer
+    orderitems = serializers.OrderItemSerializer
+    class Meta:
+        model = Order
+        fields = [ 
+            'id', 
+            'status',
+            'date',
+            'user',
+            ]
+          
+            
+class OrderDetailViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [  
+            'id',  
+            'status',
+            'date',
+            'user'
+                ]
+    def get_user(self, obj):
+        user=order.user
+        return UserSerializer(user,many=False).data   
+
+class OrderCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [  
+            'status',
+            'date',
+            'user'
+                ]
+
+class OrderDefaultUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+       model =Order
+       fields = [
+        'status'
+           ]
+
+# OrderItem Serializers 
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = [  
+        'item',
+        'order',
+        'quantity'
+            ]
+
+class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = [  
+        'item',
+        'order',
+        'quantity'
+            ]       
+
+class OrderItemDetailViewSerializer(serializers.ModelSerializer):
+    item = serializers.ItemSerializer
+    order = serializers.OrderSerializer
+    class Meta:
+        model = OrderItem
+        fields = [  
+        'item',
+        'order',
+        'quantity'
+            ] 
+   

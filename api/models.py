@@ -31,7 +31,7 @@ class Address(models.Model):
 		('AH', 'Ahmadi Governorate'),
 		('J', 'Jahra Governorate'),
 		)
-	user= models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+	user= models.ForeignKey(User, default=1,  related_name='user', on_delete=models.CASCADE)
 	name = models.CharField(max_length=120)
 	governorate = models.CharField(max_length=1, choices=GOVERNORATE_CHOICE)
 	area = models.CharField(max_length=40)
@@ -46,3 +46,19 @@ class Address(models.Model):
 
 	def __str__(self):
 		return self.name
+
+class Order(models.Model):
+	status=(
+		('0', 'Ordered'),
+		('P', 'Packed'),
+		('D', 'Delivered')
+		)
+
+	user= models.ForeignKey(User, default=1, related_name='user',  on_delete=models.CASCADE)
+	date = models.DateField(auto_now_add=True)
+	address = models.ForeignKey(Address, default=1, on_delete=models.CASCADE)
+
+class OrderItem(models.Model):
+	item= models.ForeignKey(Item, default=1, on_delete=models.CASCADE)
+	order=models.ForeignKey(Order, default=1, related_name='item', on_delete=models.CASCADE)
+	quantity=models.PositiveIntegerField()	
