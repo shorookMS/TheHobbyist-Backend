@@ -21,8 +21,6 @@ from .views import (
 from .views import ( 
     OrderListAPIView,
     OrderDetailAPIView, 
-    OrderCreateUpdateAPIView,  
-    OrderDefaultUpdateAPIView,
     OrderCreateAPIView)
 
 from rest_framework_jwt.views import obtain_jwt_token
@@ -44,7 +42,5 @@ urlpatterns = [
     path('order/list/', OrderListAPIView.as_view(), name='api-order-list'),
     path('order/create/', OrderCreateAPIView.as_view(), name='api-order-create'),
     path('order/<int:order_id>/detail/', OrderDetailAPIView.as_view(), name='api-order-detail'),
-    path('order/<int:order_id>/update/', OrderCreateUpdateAPIView.as_view(), name='api-order-update'),
-    path('order/<int:order_id>/default-update/', OrderDefaultUpdateAPIView.as_view(), name='api-order-default-update'),
     # path('api/<int:item_id>/delete/', ItemDeleteAPIView.as_view(), name='api-delete'),
 ]

@@ -1,4 +1,4 @@
-from .models import (Item, Address,OrderItem)
+from .models import (Item, Address,OrderItem, Order, Profile)
 from rest_framework.generics import (
 	ListAPIView,
 	RetrieveAPIView,
@@ -14,6 +14,11 @@ from .serializers import (
   OrderDefaultUpdateSerializer
 )
 
+from .serializers import ( 
+  OrderItemDetailViewSerializer, 
+  OrderItemCreateUpdateSerializer, 
+)
+
 from .serializers import (
 	ItemListViewSerializer, 
 	ItemDetailViewSerializer, 
@@ -22,8 +27,7 @@ from .serializers import (
 )
 
 from .serializers import ( 
-	AddressListViewSerializer, 
-	AddressDetailViewSerializer, 
+	AddressListViewSerializer,  
 	AddressCreateUpdateSerializer, 
 	AddressDefaultUpdateSerializer
 )
@@ -200,6 +204,7 @@ class AddressListAPIView(ListAPIView):
 	serializer_class = AddressListViewSerializer
 
 	def get_queryset(self, *args, **kwargs):
+		#Will remove if condition when permissions are set
 		if self.request.user.is_anonymous:
 			return Address.objects.all()
 		return Address.objects.filter(user=self.request.user)
@@ -227,6 +232,15 @@ class AddressDefaultUpdateAPIView(RetrieveUpdateAPIView):
 
 
 # Order Views
+class OrderListAPIView(ListAPIView):
+	serializer_class = OrderListViewSerializer
+
+	def get_queryset(self, *args, **kwargs):
+		#Will remove if condition when permissions are set
+		if self.request.user.is_anonymous:
+			return Order.objects.all()
+		return Order.objects.filter(user=self.request.user)
+
 class OrderDetailAPIView(RetrieveAPIView):
 	queryset = Order.objects.all()
 	serializer_class = OrderDetailViewSerializer
@@ -248,14 +262,14 @@ class OrderDefaultUpdateAPIView(RetrieveUpdateAPIView):
 	#permission_classes = [IsAuthenticated,IsOwner]
 
 # OrderItem Views
-class OrderDetailAPIView(RetrieveAPIView):
+class OrderItemDetailAPIView(RetrieveAPIView):
 	queryset = OrderItem.objects.all()
 	serializer_class = OrderItemDetailViewSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'order_id'
 	# permission_classes = [AllowAny,]
 
-class OrderCreateAPIView(CreateAPIView):
+class OrderItemCreateAPIView(CreateAPIView):
 	queryset = OrderItem.objects.all()
 	serializer_class = OrderItemCreateUpdateSerializer
 	

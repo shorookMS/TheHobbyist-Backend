@@ -1,17 +1,11 @@
+
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
-class Profile(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
-	phoneNo = models.CharField(max_length=9,null=True)
-	bio = models.TextField(max_length=500)
-	img = models.ImageField(null=True)
-	birth_date = models.DateField(null=True)
 
-	def __str__(self):
-		return self.user.username
 
 
 class Item(models.Model):
@@ -35,6 +29,16 @@ class Item(models.Model):
 	def __str__(self):
 		return self.name
 
+class Profile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	phoneNo = models.CharField(max_length=9,null=True)
+	bio = models.TextField(max_length=500)
+	img = models.ImageField(null=True)
+	birth_date = models.DateField(null=True)
+
+	def __str__(self):
+		return self.user.username
+
 class Address(models.Model):
 	GOVERNORATE_CHOICE = (
 		('A', 'Al Asimah Governorate'),
@@ -45,7 +49,7 @@ class Address(models.Model):
 		('J', 'Jahra Governorate'),
 		)
 
-	user = models.ForeignKey(Profile, default=1,  related_name='profile', on_delete=models.CASCADE)
+	user = models.ForeignKey(Profile, default=1,  related_name='addprofile', on_delete=models.CASCADE)
 	name = models.CharField(max_length=120)
 	governorate = models.CharField(max_length=2, choices=GOVERNORATE_CHOICE)
 	area = models.CharField(max_length=40)
@@ -62,20 +66,22 @@ class Address(models.Model):
 		return self.name
 
 class Order(models.Model):
-	status=(
+	STATUS_CHOICE=(
 		('0', 'Ordered'),
 		('P', 'Packed'),
 		('D', 'Delivered')
 		)
 
-	user= models.ForeignKey(Profile, default=1, related_name='profile',  on_delete=models.CASCADE)
+	user= models.ForeignKey(Profile, default=1, related_name='orprofile',  on_delete=models.CASCADE)
 	date = models.DateField(auto_now_add=True)
+	status = models.CharField(max_length=2, choices=STATUS_CHOICE)
 	address = models.ForeignKey(Address, default=1, on_delete=models.CASCADE)
 
 class OrderItem(models.Model):
 	item= models.ForeignKey(Item, default=1, on_delete=models.CASCADE)
 	order=models.ForeignKey(Order, default=1, related_name='item', on_delete=models.CASCADE)
 	quantity=models.PositiveIntegerField()	
+
 
 
 @receiver(post_save, sender=User)
