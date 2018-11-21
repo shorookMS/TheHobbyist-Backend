@@ -1,4 +1,4 @@
-from .models import (Item, Address)
+from .models import (Item, Address,OrderItem)
 from rest_framework.generics import (
 	ListAPIView,
 	RetrieveAPIView,
@@ -6,6 +6,14 @@ from rest_framework.generics import (
 	DestroyAPIView,
 	CreateAPIView,
 )
+
+from .serializers import ( 
+  OrderListViewSerializer, 
+  OrderDetailViewSerializer, 
+  OrderCreateUpdateSerializer, 
+  OrderDefaultUpdateSerializer
+)
+
 from .serializers import (
 	ItemListViewSerializer, 
 	ItemDetailViewSerializer, 
@@ -31,6 +39,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 # User Views
+
 
 class UserCreateAPIView(CreateAPIView):
 	serializer_class = UserCreateSerializer
@@ -215,3 +224,42 @@ class AddressDefaultUpdateAPIView(RetrieveUpdateAPIView):
 	lookup_field = 'id'
 	lookup_url_kwarg = 'address_id'
 	#permission_classes = [IsAuthenticated,IsOwner]
+
+
+# Order Views
+class OrderDetailAPIView(RetrieveAPIView):
+	queryset = Order.objects.all()
+	serializer_class = OrderDetailViewSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'order_id'
+	# permission_classes = [AllowAny,]
+
+class OrderCreateAPIView(CreateAPIView):
+	queryset = Order.objects.all()
+	serializer_class = OrderCreateUpdateSerializer
+	
+	#permission_classes = [IsAuthenticated,IsOwner]
+
+class OrderDefaultUpdateAPIView(RetrieveUpdateAPIView):
+	queryset = Order.objects.all()
+	serializer_class = OrderDefaultUpdateSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'order_id'
+	#permission_classes = [IsAuthenticated,IsOwner]
+
+# OrderItem Views
+class OrderDetailAPIView(RetrieveAPIView):
+	queryset = OrderItem.objects.all()
+	serializer_class = OrderItemDetailViewSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'order_id'
+	# permission_classes = [AllowAny,]
+
+class OrderCreateAPIView(CreateAPIView):
+	queryset = OrderItem.objects.all()
+	serializer_class = OrderItemCreateUpdateSerializer
+	
+	#permission_classes = [IsAuthenticated,IsOwner]
+
+
+	

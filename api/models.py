@@ -44,7 +44,8 @@ class Address(models.Model):
 		('AH', 'Ahmadi Governorate'),
 		('J', 'Jahra Governorate'),
 		)
-	user = models.ForeignKey(Profile, default=1, on_delete=models.CASCADE)
+
+	user = models.ForeignKey(Profile, default=1,  related_name='profile', on_delete=models.CASCADE)
 	name = models.CharField(max_length=120)
 	governorate = models.CharField(max_length=2, choices=GOVERNORATE_CHOICE)
 	area = models.CharField(max_length=40)
@@ -60,8 +61,21 @@ class Address(models.Model):
 	def __str__(self):
 		return self.name
 
-# class AddressBook(models.Model):
-# 	address = models.ForeignKey(Address, default=1, on_delete=models.CASCADE)
+class Order(models.Model):
+	status=(
+		('0', 'Ordered'),
+		('P', 'Packed'),
+		('D', 'Delivered')
+		)
+
+	user= models.ForeignKey(Profile, default=1, related_name='profile',  on_delete=models.CASCADE)
+	date = models.DateField(auto_now_add=True)
+	address = models.ForeignKey(Address, default=1, on_delete=models.CASCADE)
+
+class OrderItem(models.Model):
+	item= models.ForeignKey(Item, default=1, on_delete=models.CASCADE)
+	order=models.ForeignKey(Order, default=1, related_name='item', on_delete=models.CASCADE)
+	quantity=models.PositiveIntegerField()	
 
 
 @receiver(post_save, sender=User)
@@ -72,5 +86,6 @@ def create_user_profile(sender, instance, created, **kwargs):
 # @receiver(post_save, sender=User)
 # def save_user_profile(sender, instance, **kwargs):
 # 	instance.profile.save()
+
 
 
