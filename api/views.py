@@ -34,30 +34,33 @@ from .serializers import (
 
 from .serializers import (
 	UserCreateSerializer,
-	UserLoginSerializer
+	UserLoginSerializer,
+	ProfileDetailViewSerializer
 
 	)
 
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
-
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from .permissions import IsOwner
 # User Views
 
 
 class UserCreateAPIView(CreateAPIView):
 	serializer_class = UserCreateSerializer
+	permission_classes = [AllowAny,]
 
 class UserLoginAPIView(APIView):
-    serializer_class = UserLoginSerializer
-
-    def post(self, request):
-        my_data = request.data
-        serializer = UserLoginSerializer(data=my_data)
-        if serializer.is_valid(raise_exception=True):
-            valid_data = serializer.data
-            return Response(valid_data, status=HTTP_200_OK)
-        return Response(serializer.errors, HTTP_400_BAD_REQUEST)
+	serializer_class = UserLoginSerializer
+	permission_classes = [AllowAny,]
+	def post(self, request):
+		my_data = request.data
+		serializer = UserLoginSerializer(data=my_data)
+		if serializer.is_valid(raise_exception=True):
+			valid_data = serializer.data
+			return Response(valid_data, status=HTTP_200_OK)
+		return Response(serializer.errors, HTTP_400_BAD_REQUEST)
 
 
 # class UserSignupAPIView(View):
@@ -83,53 +86,6 @@ class UserLoginAPIView(APIView):
 #             user_obj = user.save(commit=False)
 #             user_obj.set_password(user_obj.password)
 #             user_obj.save()
-            
-       
-
-# class Login(View):
-#     form_class = UserLogin
-
-#     def get(self, request, *args, **kwargs):
-#         form = self.form_class()
-#         return render(request, self.template_name, {'form': form})
-
-#     def post(self, request, *args, **kwargs):
-#         form = self.form_class(request.POST)
-#         if form.is_valid():
-
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-
-#             auth_user = authenticate(username=username, password=password)
-#             if auth_user is not None:
-#                 login(request, auth_user)
-#                 messages.success(request, "Welcome Back!")
-#                 return redirect('dashboard')
-#             messages.warning(request, "Wrong email/password combination. Please try again.")
-#             return redirect("login")
-#         messages.warning(request, form.errors)
-#         return redirect("login")
-
-# class Logout(View):
-#     def get(self, request, *args, **kwargs):
-#         logout(request)
-#         messages.success(request, "You have successfully logged out.")
-#         return redirect("login")
-
-# def profile(request, user_id):
-#     user = User.objects.get(id=user_id)
-#     events = Event.objects.filter(user=user)
-
-#     my_follows = []
-#     for follow in Follower.objects.filter(follower = request.user):
-#         my_follows.append(follow.following.id)  
-
-#     context = {
-#         'events':events,
-#         'user':user,
-#         'my_follows': my_follows
-#     }
-#     return render(request, 'profile.html', context)
 
 # @login_required
 # @transaction.atomic
@@ -166,7 +122,7 @@ class UserLoginAPIView(APIView):
 class ItemListAPIView(ListAPIView):
 	queryset = Item.objects.all()
 	serializer_class = ItemListViewSerializer
-	# permission_classes = [AllowAny,]
+	permission_classes = [AllowAny,]
 	# filter_backends = [OrderingFilter, SearchFilter,]
 	# search_fields = ['name', 'description', 'owner__username']
 
@@ -175,105 +131,101 @@ class ItemDetailAPIView(RetrieveAPIView):
 	serializer_class = ItemDetailViewSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'item_id'
-	# permission_classes = [AllowAny,]
+	permission_classes = [AllowAny,]
 
 class ItemCreateUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Item.objects.all()
 	serializer_class = ItemCreateUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'item_id'
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAdminUser]
 
 class ItemCreateAPIView(CreateAPIView):
 	queryset = Item.objects.all()
 	serializer_class = ItemCreateUpdateSerializer
-	
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAdminUser]
 
 class ItemStockUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Item.objects.all()
 	serializer_class = ItemStockUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'item_id'
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAdminUser]
 
 
 # Address Views
 
 class AddressListAPIView(ListAPIView):
+	queryset = Address.objects.all()
 	serializer_class = AddressListViewSerializer
-
-	def get_queryset(self, *args, **kwargs):
-		#Will remove if condition when permissions are set
-		if self.request.user.is_anonymous:
-			return Address.objects.all()
-		return Address.objects.filter(user=self.request.user)
-
+	permission_classes = [IsAuthenticated,IsAdminUser]
 
 class AddressCreateUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Address.objects.all()
 	serializer_class = AddressCreateUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'address_id'
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAuthenticated,IsOwner]
 
 class AddressCreateAPIView(CreateAPIView):
 	queryset = Address.objects.all()
 	serializer_class = AddressCreateUpdateSerializer
-	
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes =[IsAuthenticated,IsOwner]
 
 class AddressDefaultUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Address.objects.all()
 	serializer_class = AddressDefaultUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'address_id'
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes =[IsAuthenticated,IsOwner]
 
 
 # Order Views
 class OrderListAPIView(ListAPIView):
+	queryset = Order.objects.all()
 	serializer_class = OrderListViewSerializer
-
-	def get_queryset(self, *args, **kwargs):
-		#Will remove if condition when permissions are set
-		if self.request.user.is_anonymous:
-			return Order.objects.all()
-		return Order.objects.filter(user=self.request.user)
+	permission_classes =[IsAuthenticated,IsOwner]
 
 class OrderDetailAPIView(RetrieveAPIView):
 	queryset = Order.objects.all()
 	serializer_class = OrderDetailViewSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'order_id'
-	# permission_classes = [AllowAny,]
+	permission_classes = [IsAuthenticated,IsOwner]
 
 class OrderCreateAPIView(CreateAPIView):
 	queryset = Order.objects.all()
 	serializer_class = OrderCreateUpdateSerializer
-	
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes =[IsAuthenticated,IsOwner]
 
 class OrderDefaultUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Order.objects.all()
 	serializer_class = OrderDefaultUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'order_id'
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes =[IsAuthenticated,IsOwner]
 
 # OrderItem Views
 class OrderItemDetailAPIView(RetrieveAPIView):
 	queryset = OrderItem.objects.all()
 	serializer_class = OrderItemDetailViewSerializer
 	lookup_field = 'id'
-	lookup_url_kwarg = 'order_id'
-	# permission_classes = [AllowAny,]
+	lookup_url_kwarg = 'orderitem_id'
+	permission_classes = [IsAuthenticated,IsOwner]
+
 
 class OrderItemCreateAPIView(CreateAPIView):
 	queryset = OrderItem.objects.all()
 	serializer_class = OrderItemCreateUpdateSerializer
-	
-	#permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAuthenticated,IsOwner]
 
+
+# Profile Views 
+class ProfileDetailAPIView(RetrieveAPIView):
+	queryset = Profile.objects.all()
+	serializer_class = ProfileDetailViewSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'user_id'
+	permission_classes =[IsAuthenticated,IsOwner]
 
 	

@@ -11,8 +11,19 @@ class UserSerializer(serializers.ModelSerializer):
         'username',
         'first_name',
         'last_name',
-        'email',
-        ''
+        'email'
+            ]
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = Profile
+        fields = [  
+        'user',
+        'phoneNo',
+        'bio',
+        'img',
+        'birth_date'
             ]
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -61,8 +72,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
             ]
 
 class OrderSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    orderitems = OrderItemSerializer()
+    # user = UserSerializer()
+    orderItems = OrderItemSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = [ 
@@ -70,17 +81,19 @@ class OrderSerializer(serializers.ModelSerializer):
             'status',
             'date',
             'user',
+            'orderItems'
             ]
-
-
-
-
-
+    def create(self, validated_data):
+        orderItems_data = validated_data.pop('orderItems')
+        order = Order.objects.create(**validated_data)
+        for orderItem_data in orderitems_data:
+            OrderItem.objects.create(order=order, **orderItem_data)
+        return order
 
 
 # User Serializer 
 
-# class UserCreateSerializer(serializers.ModelSerializer):
+# class ProfileUpdateSerializer(serializers.ModelSerializer):
 #     password = serializers.CharField(write_only=True)
 #     user =  serializers.UserSerializer
 #     class Meta:
@@ -137,7 +150,24 @@ class UserLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Incorrect username/password combination! Noob..")
         return data
 
-# Make a Profile Serialiser 
+# Profile Serialiser 
+
+class ProfileDetailViewSerializer(serializers.ModelSerializer):
+    addresses = AddressSerializer(many=True, read_only=True)
+    orders = OrderSerializer(many=True, read_only=True)
+
+    user = UserSerializer()
+    class Meta:
+        model = Profile
+        fields = [  
+        'user',
+        'phoneNo',
+        'bio',
+        'img',
+        'birth_date',
+        'addresses',
+        'orders'
+            ]
 
 
 # Items Serializers
@@ -145,7 +175,7 @@ class UserLoginSerializer(serializers.Serializer):
 
 class ItemListViewSerializer(serializers.ModelSerializer):
     detail = serializers.HyperlinkedIdentityField(
-        view_name = "api-detail",
+        view_name = "api-item-detail",
         lookup_field = "id",
         lookup_url_kwarg = "item_id"
         )
@@ -200,17 +230,25 @@ class ItemStockUpdateSerializer(serializers.ModelSerializer):
 
 
 # Address Serializers 
-# Look at this 
 
 
 class AddressListViewSerializer(serializers.ModelSerializer):
+    # user = ProfileSerializer()
     class Meta:
         model = Address
         fields = [  
         'id',
         'name',
+        'governorate',
         'area',
-        'user',
+        'block',
+        'street',
+        'house_building',
+        'floor',
+        'appartment',
+        'extra_directions',
+        'default',
+        'user'
             ]
         
 class AddressCreateUpdateSerializer(serializers.ModelSerializer):
@@ -240,8 +278,8 @@ class AddressDefaultUpdateSerializer(serializers.ModelSerializer):
 # OrderItem Serializers 
 
 class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
-    item = ItemSerializer()
-    order = OrderSerializer()
+    # item = ItemSerializer()
+    # order = OrderSerializer()
     class Meta:
         model = OrderItem
         fields = [  
@@ -251,8 +289,8 @@ class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
             ]       
 
 class OrderItemDetailViewSerializer(serializers.ModelSerializer):
-    item = ItemSerializer()
-    order = OrderSerializer()
+    # item = ItemSerializer()
+    # order = OrderSerializer()
     class Meta:
         model = OrderItem
         fields = [  
@@ -277,13 +315,15 @@ class OrderListViewSerializer(serializers.ModelSerializer):
         
             
 class OrderDetailViewSerializer(serializers.ModelSerializer):
+    orderItems =  OrderItemSerializer()
     class Meta:
         model = Order
         fields = [  
             'id',  
             'status',
             'date',
-            'user'
+            'user',
+            'orderItems'
                 ]
 
 
@@ -291,11 +331,11 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [  
-            'status',
+            'order',
             'date',
-            'user'
+            'address'
                 ]
-
+    
 class OrderDefaultUpdateSerializer(serializers.ModelSerializer):
    class Meta:
        model =Order
