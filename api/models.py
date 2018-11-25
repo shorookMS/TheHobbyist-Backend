@@ -75,7 +75,7 @@ class Order(models.Model):
 
 	profile= models.ForeignKey(Profile, default=1, related_name='orders',  on_delete=models.CASCADE)
 	date = models.DateField(auto_now_add=True)
-	status = models.CharField( default=3,max_length=2, choices=STATUS_CHOICE)
+	status = models.CharField( default='C',max_length=2, choices=STATUS_CHOICE)
 	address = models.ForeignKey(Address,blank=True, null=True, on_delete=models.CASCADE)
 
 class OrderItem(models.Model):

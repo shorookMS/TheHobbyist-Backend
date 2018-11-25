@@ -169,9 +169,31 @@ class AddressCreateUpdateAPIView(RetrieveUpdateAPIView):
 	permission_classes = [IsAuthenticated,IsOwner]
 
 class AddressCreateAPIView(CreateAPIView):
-	queryset = Address.objects.all()
+	# queryset = Address.objects.all()
 	serializer_class = AddressCreateUpdateSerializer
 	permission_classes =[IsAuthenticated,IsOwner]
+
+	def post(self, request):
+		my_data = request.data
+		print(request.user)
+		serializer = self.serializer_class(data=my_data)
+		if serializer.is_valid():
+			valid_data = serializer.data
+			new_data = {
+				'name': valid_data['name'],
+				'governorate': valid_data['governorate'],
+				'area': valid_data['area'],
+				'block': valid_data['block'],
+				'street': valid_data['street'],
+				'house_building': valid_data['house_building'],
+				'floor': valid_data['floor'],
+				'appartment': valid_data['appartment'],
+				'profile': Profile.objects.get(id=request.user.id),
+				'extra_directions': valid_data['extra_directions']
+			}
+			Address.objects.create(**new_data)
+			return Response(valid_data, status=HTTP_200_OK)
+		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class AddressDefaultUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Address.objects.all()
@@ -206,7 +228,6 @@ class OrderCreateAPIView(CreateAPIView):
 		if serializer.is_valid():
 			valid_data = serializer.data
 			new_data = {
-				'status': valid_data['status'],
 				'profile': Profile.objects.get(id=request.user.id),
 				'address': valid_data['address']
 			}
