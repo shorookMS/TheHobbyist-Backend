@@ -333,7 +333,6 @@ class OrderDetailViewSerializer(serializers.ModelSerializer):
             'id',  
             'status',
             'date',
-            'user',
             'orderItems'
                 ]
 
@@ -342,7 +341,6 @@ class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'user',
             'status',  
             'date',
             'address'
