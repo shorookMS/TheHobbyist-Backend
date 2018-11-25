@@ -28,7 +28,8 @@ from .views import (
     OrderStatusUpdateAPIView,
     OrderItemDetailAPIView,
     OrderItemCreateAPIView,
-    OrderItemDeleteAPIView
+    OrderItemDeleteAPIView,
+    OrderItemQuantityUpdateAPIView
     )
 
 from rest_framework_jwt.views import obtain_jwt_token
@@ -54,10 +55,11 @@ urlpatterns = [
     path('order/<int:order_id>/status-update/', OrderStatusUpdateAPIView.as_view(), name='api-order-status-update'),
     path('order/<int:order_id>/detail/', OrderDetailAPIView.as_view(), name='api-order-detail'),
 
-    # Order Urls
+    # Order Item Urls
     path('orderitem/create/', OrderItemCreateAPIView.as_view(), name='api-orderitem-create'),
     path('orderitem/<int:orderitem_id>/detail/', OrderItemDetailAPIView.as_view(), name='api-orderitem-detail'),
     path('orderitem/<int:orderitem_id>/delete/', OrderItemDeleteAPIView.as_view(), name='api-orderitem-delete'),
+    path('orderitem/<int:orderitem_id>/quantity-update/', OrderItemQuantityUpdateAPIView.as_view(), name='api-orderitem-quantity-update'),
 
 
 ]
