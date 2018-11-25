@@ -49,7 +49,7 @@ class Address(models.Model):
 		('J', 'Jahra Governorate'),
 		)
 
-	user = models.ForeignKey(Profile, default=1,  related_name='addresses', on_delete=models.CASCADE)
+	profile = models.ForeignKey(Profile, default=1,  related_name='addresses', on_delete=models.CASCADE)
 	name = models.CharField(max_length=120)
 	governorate = models.CharField(max_length=2, choices=GOVERNORATE_CHOICE)
 	area = models.CharField(max_length=40)
@@ -69,12 +69,13 @@ class Order(models.Model):
 	STATUS_CHOICE=(
 		('O', 'Ordered'),
 		('P', 'Packed'),
-		('D', 'Delivered')
+		('D', 'Delivered'),
+		('C', 'Cart')
 		)
 
-	user= models.ForeignKey(Profile, default=1, related_name='orders',  on_delete=models.CASCADE)
+	profile= models.ForeignKey(Profile, default=1, related_name='orders',  on_delete=models.CASCADE)
 	date = models.DateField(auto_now_add=True)
-	status = models.CharField( default=0,max_length=2, choices=STATUS_CHOICE)
+	status = models.CharField( default=3,max_length=2, choices=STATUS_CHOICE)
 	address = models.ForeignKey(Address, default=1, on_delete=models.CASCADE)
 
 class OrderItem(models.Model):

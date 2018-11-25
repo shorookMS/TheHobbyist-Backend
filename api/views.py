@@ -11,12 +11,13 @@ from .serializers import (
   OrderListViewSerializer, 
   OrderDetailViewSerializer, 
   OrderCreateUpdateSerializer, 
-  OrderDefaultUpdateSerializer
+  OrderStatusUpdateSerializer
 )
 
 from .serializers import ( 
   OrderItemDetailViewSerializer, 
-  OrderItemCreateUpdateSerializer, 
+  OrderItemCreateUpdateSerializer,
+  OrderItemListViewSerializer 
 )
 
 from .serializers import (
@@ -43,7 +44,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from .permissions import IsOwner
+from .permissions import IsOwner, IsUser,IsItemUser
 # User Views
 
 
@@ -198,9 +199,9 @@ class OrderCreateAPIView(CreateAPIView):
 	serializer_class = OrderCreateUpdateSerializer
 	permission_classes =[IsAuthenticated,IsOwner]
 
-class OrderDefaultUpdateAPIView(RetrieveUpdateAPIView):
+class OrderStatusUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Order.objects.all()
-	serializer_class = OrderDefaultUpdateSerializer
+	serializer_class = OrderStatusUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'order_id'
 	permission_classes =[IsAuthenticated,IsOwner]
@@ -211,14 +212,21 @@ class OrderItemDetailAPIView(RetrieveAPIView):
 	serializer_class = OrderItemDetailViewSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'orderitem_id'
-	permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAuthenticated,IsItemUser]
 
 
 class OrderItemCreateAPIView(CreateAPIView):
 	queryset = OrderItem.objects.all()
 	serializer_class = OrderItemCreateUpdateSerializer
-	permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAuthenticated,IsItemUser]
 
+
+class OrderItemDeleteAPIView(DestroyAPIView):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemListViewSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'orderitem_id'
+    permission_classes = [IsAuthenticated,IsItemUser]
 
 # Profile Views 
 class ProfileDetailAPIView(RetrieveAPIView):
@@ -226,6 +234,6 @@ class ProfileDetailAPIView(RetrieveAPIView):
 	serializer_class = ProfileDetailViewSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'user_id'
-	permission_classes =[IsAuthenticated,IsOwner]
+	permission_classes =[IsAuthenticated,IsUser]
 
 	

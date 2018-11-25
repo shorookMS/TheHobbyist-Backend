@@ -65,7 +65,8 @@ class AddressSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = [  
+        fields = [
+        'id',  
         'item',
         'order',
         'quantity'
@@ -80,7 +81,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'id', 
             'status',
             'date',
-            'user',
+            'profile',
             'orderItems'
             ]
     def create(self, validated_data):
@@ -238,6 +239,7 @@ class AddressListViewSerializer(serializers.ModelSerializer):
         model = Address
         fields = [  
         'id',
+        'profile',
         'name',
         'governorate',
         'area',
@@ -248,13 +250,14 @@ class AddressListViewSerializer(serializers.ModelSerializer):
         'appartment',
         'extra_directions',
         'default',
-        'user'
+        
             ]
         
 class AddressCreateUpdateSerializer(serializers.ModelSerializer):
    class Meta:
        model = Address
        fields = [  
+        'profile',
         'name',
         'governorate',
         'area',
@@ -275,7 +278,15 @@ class AddressDefaultUpdateSerializer(serializers.ModelSerializer):
         'default',
            ]
 
-# OrderItem Serializers 
+# OrderItem Serializers
+class OrderItemListViewSerializer(serializers.ModelSerializer):
+      class Meta:
+        model = OrderItem
+        fields = [  
+        'item',
+        'order',
+        'quantity'
+            ]     
 
 class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
     # item = ItemSerializer()
@@ -289,8 +300,8 @@ class OrderItemCreateUpdateSerializer(serializers.ModelSerializer):
             ]       
 
 class OrderItemDetailViewSerializer(serializers.ModelSerializer):
-    # item = ItemSerializer()
-    # order = OrderSerializer()
+    item = ItemSerializer()
+    order = OrderSerializer()
     class Meta:
         model = OrderItem
         fields = [  
@@ -310,7 +321,7 @@ class OrderListViewSerializer(serializers.ModelSerializer):
         'id',
         'status',
         'date',
-        'user',
+        'profile',
             ]
         
             
@@ -330,16 +341,18 @@ class OrderDetailViewSerializer(serializers.ModelSerializer):
 class OrderCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = [  
-            'order',
+        fields = [
+            'user',
+            'status',  
             'date',
             'address'
                 ]
     
-class OrderDefaultUpdateSerializer(serializers.ModelSerializer):
+class OrderStatusUpdateSerializer(serializers.ModelSerializer):
    class Meta:
        model =Order
        fields = [
+
         'status'
            ]
 
