@@ -17,7 +17,8 @@ from .serializers import (
 from .serializers import ( 
   OrderItemDetailViewSerializer, 
   OrderItemCreateUpdateSerializer,
-  OrderItemListViewSerializer 
+  OrderItemListViewSerializer,
+  OrderItemQuantityUpdateSerializer
 )
 
 from .serializers import (
@@ -252,9 +253,24 @@ class OrderItemDetailAPIView(RetrieveAPIView):
 
 
 class OrderItemCreateAPIView(CreateAPIView):
-	queryset = OrderItem.objects.all()
+	# queryset = OrderItem.objects.all()
 	serializer_class = OrderItemCreateUpdateSerializer
 	permission_classes = [IsAuthenticated,IsItemUser]
+
+	def post(self, request):
+		my_data = request.data
+		print(request.user)
+		serializer = self.serializer_class(data=my_data)
+		if serializer.is_valid():
+			valid_data = serializer.data
+			new_data = {
+				'order': Order.objects.get(id=valid_data['order']),
+				'item': Item.objects.get(id=valid_data['item']),
+				'quantity': valid_data['quantity']
+			}
+			OrderItem.objects.create(**new_data)
+			return Response(valid_data, status=HTTP_200_OK)
+		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class OrderItemDeleteAPIView(DestroyAPIView):
@@ -263,6 +279,13 @@ class OrderItemDeleteAPIView(DestroyAPIView):
 	lookup_field = 'id'
 	lookup_url_kwarg = 'orderitem_id'
 	permission_classes = [IsAuthenticated,IsItemUser]
+
+class OrderItemQuantityUpdateAPIView(RetrieveUpdateAPIView):
+	queryset = OrderItem.objects.all()
+	serializer_class = OrderItemQuantityUpdateSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'orderitem_id'
+	permission_classes =[IsAuthenticated,IsItemUser]
 
 # Profile Views 
 class ProfileDetailAPIView(RetrieveAPIView):

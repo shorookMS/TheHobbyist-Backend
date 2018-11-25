@@ -309,6 +309,13 @@ class OrderItemDetailViewSerializer(serializers.ModelSerializer):
         'order',
         'quantity'
             ] 
+
+class OrderItemQuantityUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+       model =OrderItem
+       fields = [
+        'quantity'
+           ]
    
 
 
