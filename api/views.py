@@ -195,9 +195,24 @@ class OrderDetailAPIView(RetrieveAPIView):
 	permission_classes = [IsAuthenticated,IsOwner]
 
 class OrderCreateAPIView(CreateAPIView):
-	queryset = Order.objects.all()
+	# queryset = Order.objects.all()
 	serializer_class = OrderCreateUpdateSerializer
 	permission_classes =[IsAuthenticated,IsOwner]
+
+	def post(self, request):
+		my_data = request.data
+		print(request.user)
+		serializer = self.serializer_class(data=my_data)
+		if serializer.is_valid():
+			valid_data = serializer.data
+			new_data = {
+				'status': valid_data['status'],
+				'profile': Profile.objects.get(id=request.user.id),
+				'address': valid_data['address']
+			}
+			Order.objects.create(**new_data)
+			return Response(valid_data, status=HTTP_200_OK)
+		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class OrderStatusUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = Order.objects.all()
@@ -222,11 +237,11 @@ class OrderItemCreateAPIView(CreateAPIView):
 
 
 class OrderItemDeleteAPIView(DestroyAPIView):
-    queryset = OrderItem.objects.all()
-    serializer_class = OrderItemListViewSerializer
-    lookup_field = 'id'
-    lookup_url_kwarg = 'orderitem_id'
-    permission_classes = [IsAuthenticated,IsItemUser]
+	queryset = OrderItem.objects.all()
+	serializer_class = OrderItemListViewSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'orderitem_id'
+	permission_classes = [IsAuthenticated,IsItemUser]
 
 # Profile Views 
 class ProfileDetailAPIView(RetrieveAPIView):
