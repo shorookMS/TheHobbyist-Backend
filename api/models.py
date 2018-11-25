@@ -56,9 +56,9 @@ class Address(models.Model):
 	block = models.PositiveIntegerField()
 	street = models.CharField(max_length=120)
 	house_building = models.CharField(max_length=40)
-	floor = models.PositiveIntegerField()
-	appartment = models.CharField(max_length=10)
-	extra_directions = models.TextField()
+	floor = models.PositiveIntegerField(null=True, blank=True)
+	appartment = models.CharField(max_length=5, null=True, blank=True)
+	extra_directions = models.TextField(null=True, blank=True)
 	default = models.BooleanField(default=False)
 
 
@@ -81,7 +81,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
 	item= models.ForeignKey(Item, default=1, on_delete=models.CASCADE)
 	order=models.ForeignKey(Order, default=1, related_name='orderItems', on_delete=models.CASCADE)
-	quantity=models.PositiveIntegerField(default=0)	
+	quantity=models.PositiveIntegerField(default=1)	
 
 
 
