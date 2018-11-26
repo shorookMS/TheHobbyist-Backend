@@ -49,7 +49,8 @@ class ItemSerializer(serializers.ModelSerializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = [  
+        fields = [
+        'id',  
         'name',
         'governorate',
         'area',
