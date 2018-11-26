@@ -232,8 +232,8 @@ class OrderCreateAPIView(CreateAPIView):
 				'profile': Profile.objects.get(id=request.user.id),
 				'address': valid_data['address']
 			}
-			Order.objects.create(**new_data)
-			return Response(valid_data, status=HTTP_200_OK)
+			ord = Order.objects.create(**new_data)
+			return Response(OrderCreateUpdateSerializer(ord).data, status=HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class OrderStatusUpdateAPIView(RetrieveUpdateAPIView):
