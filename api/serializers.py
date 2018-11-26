@@ -74,6 +74,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     # user = UserSerializer()
+    address = AddressSerializer()
     orderItems = OrderItemSerializer(many=True, read_only=True)
     class Meta:
         model = Order
@@ -82,7 +83,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'status',
             'date',
             'profile',
-            'orderItems'
+            'orderItems',
+            'address'
             ]
     def create(self, validated_data):
         orderItems_data = validated_data.pop('orderItems')
