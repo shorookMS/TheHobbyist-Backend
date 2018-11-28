@@ -289,10 +289,15 @@ class OrderItemQuantityUpdateAPIView(RetrieveUpdateAPIView):
 
 # Profile Views 
 class ProfileDetailAPIView(RetrieveAPIView):
-	queryset = Profile.objects.all()
+	# queryset = Profile.objects.all()
 	serializer_class = ProfileDetailViewSerializer
-	lookup_field = 'id'
-	lookup_url_kwarg = 'user_id'
 	permission_classes =[IsAuthenticated,IsUser]
+
+	def get(self, request, format=None):
+		if request.user.is_anonymous:
+			return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+		profile = ProfileDetailViewSerializer(Profile.objects.get(user=request.user))
+		return Response(profile.data, status=HTTP_200_OK)
+		
 
 	

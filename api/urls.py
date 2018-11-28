@@ -37,7 +37,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 urlpatterns = [
     path('login/', obtain_jwt_token, name='login'),
     path('register/', UserCreateAPIView.as_view(), name='register'),
-    path('profile/<int:user_id>/', ProfileDetailAPIView.as_view(), name='api-profile-detail'),
+    path('profile/', ProfileDetailAPIView.as_view(), name='api-profile-detail'),
     # Item Url
     path('item/list/', ItemListAPIView.as_view(), name='api-item-list'),
     path('item/create/', ItemCreateAPIView.as_view(), name='api-item-create'),
