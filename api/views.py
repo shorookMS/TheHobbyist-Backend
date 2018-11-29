@@ -45,7 +45,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
-from .permissions import IsOwner, IsUser,IsItemUser
+from .permissions import IsOwner, IsUser,IsItemUser, IsOrderUser
 # User Views
 
 
@@ -241,9 +241,11 @@ class OrderStatusUpdateAPIView(RetrieveUpdateAPIView):
 	serializer_class = OrderStatusUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'order_id'
-	permission_classes =[IsAuthenticated,IsOwner]
+	permission_classes =[IsAuthenticated,IsOrderUser]
 
-# OrderItem Views
+# OrderItem Views we should only retrive order items that belong to the spcific logged
+# Logged in user
+# Maybe Remove later
 class OrderItemDetailAPIView(RetrieveAPIView):
 	queryset = OrderItem.objects.all()
 	serializer_class = OrderItemDetailViewSerializer
@@ -251,7 +253,7 @@ class OrderItemDetailAPIView(RetrieveAPIView):
 	lookup_url_kwarg = 'orderitem_id'
 	permission_classes = [IsAuthenticated,IsItemUser]
 
-
+# We van use APIView instead of CreateAPI view because we already declared the method
 class OrderItemCreateAPIView(CreateAPIView):
 	# queryset = OrderItem.objects.all()
 	serializer_class = OrderItemCreateUpdateSerializer
@@ -292,7 +294,8 @@ class ProfileDetailAPIView(RetrieveAPIView):
 	# queryset = Profile.objects.all()
 	serializer_class = ProfileDetailViewSerializer
 	permission_classes =[IsAuthenticated,IsUser]
-
+	
+#Remove checking if annoymous
 	def get(self, request, format=None):
 		if request.user.is_anonymous:
 			return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

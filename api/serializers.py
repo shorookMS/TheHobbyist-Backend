@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         'last_name',
         'email'
             ]
-
+# Remove later
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
@@ -197,7 +197,7 @@ class ItemListViewSerializer(serializers.ModelSerializer):
 
 class ItemDetailViewSerializer(serializers.ModelSerializer):
 
- class Meta:
+    class Meta:
         model = Item
         fields = [  
         'id',
@@ -209,20 +209,20 @@ class ItemDetailViewSerializer(serializers.ModelSerializer):
         'rating',
         'category',
         'available'
-            ]
+        ]
  
 class ItemCreateUpdateSerializer(serializers.ModelSerializer):
-   class Meta:
-       model = Item
-       fields = [
-       'name',
+    class Meta:
+        model = Item
+        fields = [
+        'name',
         'description',
         'price',
         'stock',
         'image',
         'category',
         'available'
-           ]
+        ]
 
  
 class ItemStockUpdateSerializer(serializers.ModelSerializer):
@@ -230,12 +230,12 @@ class ItemStockUpdateSerializer(serializers.ModelSerializer):
        model = Item
        fields = [
         'stock',
-           ]
+        ]
 
 
 # Address Serializers 
 
-
+#Check 
 class AddressListViewSerializer(serializers.ModelSerializer):
     # user = ProfileSerializer()
     class Meta:
@@ -361,7 +361,6 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
    class Meta:
        model =Order
        fields = [
-
         'status'
            ]
 
