@@ -190,7 +190,8 @@ class AddressCreateAPIView(CreateAPIView):
 				'floor': valid_data['floor'],
 				'appartment': valid_data['appartment'],
 				'profile': Profile.objects.get(id=request.user.id),
-				'extra_directions': valid_data['extra_directions']
+				'extra_directions': valid_data['extra_directions'],
+				'default': valid_data['default'],
 			}
 			Address.objects.create(**new_data)
 			return Response(valid_data, status=HTTP_200_OK)
