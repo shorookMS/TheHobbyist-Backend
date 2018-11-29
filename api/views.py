@@ -244,6 +244,19 @@ class OrderStatusUpdateAPIView(RetrieveUpdateAPIView):
 	lookup_url_kwarg = 'order_id'
 	permission_classes =[IsAuthenticated,IsOrderUser]
 
+	def put(self, request, *args, **kwargs):
+		my_data = request.data
+		print(request.user)
+		serializer = self.serializer_class(data=my_data)
+		if serializer.is_valid():
+			valid_data = serializer.data
+			ord = Order.objects.get(id=kwargs["order_id"])
+			ord.status = valid_data['status']
+			ord.address = Address.objects.get(id=valid_data["address"])
+			ord.save()
+			return Response(OrderStatusUpdateSerializer(ord).data, status=HTTP_200_OK)
+		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
 # OrderItem Views we should only retrive order items that belong to the spcific logged
 # Logged in user
 # Maybe Remove later
