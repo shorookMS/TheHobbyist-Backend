@@ -191,6 +191,7 @@ class ItemListViewSerializer(serializers.ModelSerializer):
 		'name',
 		'price',
 		'image',
+		'stock',
 		'rating',
 		'detail'
 			]
