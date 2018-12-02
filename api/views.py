@@ -152,7 +152,7 @@ class ItemStockUpdateAPIView(RetrieveUpdateAPIView):
 	serializer_class = ItemStockUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'item_id'
-	permission_classes = [IsAdminUser]
+	permission_classes = [IsAuthenticated]
 
 
 # Address Views
