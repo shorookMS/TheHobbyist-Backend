@@ -35,7 +35,6 @@ class ItemSerializer(serializers.ModelSerializer):
 		'price',
 		'image',
 		'rating',
-		'detail'
 		'description',
 		'price',
 		'stock',
@@ -228,10 +227,10 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
  
 class ItemStockUpdateSerializer(serializers.ModelSerializer):
    class Meta:
-	   model = Item
-	   fields = [
-		'stock',
-		]
+	    model = Item
+	    fields = [
+		 'stock',
+		 ]
 
 
 # Address Serializers 

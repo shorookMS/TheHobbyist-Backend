@@ -22,6 +22,7 @@ from .serializers import (
 )
 
 from .serializers import (
+	ItemSerializer,
 	ItemListViewSerializer, 
 	ItemDetailViewSerializer, 
 	ItemCreateUpdateSerializer, 
@@ -154,6 +155,17 @@ class ItemStockUpdateAPIView(RetrieveUpdateAPIView):
 	lookup_url_kwarg = 'item_id'
 	permission_classes = [IsAuthenticated]
 
+	def put(self, request, *args, **kwargs):
+		my_data = request.data
+		print(request.user)
+		serializer = self.serializer_class(data=my_data)
+		if serializer.is_valid():
+			valid_data = serializer.data
+			item = Item.objects.get(id=kwargs["item_id"])
+			item.stock = valid_data['stock']
+			item.save()
+			return Response(ItemSerializer(item).data, status=HTTP_200_OK)
+		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 # Address Views
 
