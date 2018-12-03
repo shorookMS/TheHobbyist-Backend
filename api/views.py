@@ -180,7 +180,7 @@ class AddressCreateUpdateAPIView(RetrieveUpdateAPIView):
 	serializer_class = AddressCreateUpdateSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'address_id'
-	permission_classes = [IsAuthenticated,IsOwner]
+	permission_classes = [IsAuthenticated,IsOrderUser]
 
 class AddressCreateAPIView(CreateAPIView):
 	# queryset = Address.objects.all()
