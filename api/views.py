@@ -30,7 +30,8 @@ from .serializers import (
 	ItemStockUpdateSerializer
 )
 
-from .serializers import ( 
+from .serializers import (
+	 AddressSerializer,
 	AddressListViewSerializer,  
 	AddressCreateUpdateSerializer, 
 	AddressDefaultUpdateSerializer
@@ -206,8 +207,8 @@ class AddressCreateAPIView(CreateAPIView):
 				'extra_directions': valid_data['extra_directions'],
 				'default': valid_data['default'],
 			}
-			Address.objects.create(**new_data)
-			return Response(valid_data, status=HTTP_200_OK)
+			add = Address.objects.create(**new_data)
+			return Response(AddressSerializer(add).data, status=HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class AddressDefaultUpdateAPIView(RetrieveUpdateAPIView):
