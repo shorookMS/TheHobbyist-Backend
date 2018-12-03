@@ -15,6 +15,7 @@ from .serializers import (
 )
 
 from .serializers import ( 
+  OrderItemSerializer,
   OrderItemDetailViewSerializer, 
   OrderItemCreateUpdateSerializer,
   OrderItemListViewSerializer,
@@ -296,8 +297,8 @@ class OrderItemCreateAPIView(CreateAPIView):
 				'item': Item.objects.get(id=valid_data['item']),
 				'quantity': valid_data['quantity']
 			}
-			OrderItem.objects.create(**new_data)
-			return Response(valid_data, status=HTTP_200_OK)
+			ord=OrderItem.objects.create(**new_data)
+			return Response(OrderItemSerializer(ord).data, status=HTTP_200_OK)
 		return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
