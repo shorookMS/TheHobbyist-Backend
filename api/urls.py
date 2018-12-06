@@ -4,6 +4,7 @@ from django.urls import path
 from .views import (
 	UserCreateAPIView,
 	ProfileDetailAPIView, 
+	ProfileUpdateAPIView,
 	ItemListAPIView,
 	ItemDetailAPIView,
 	ItemCreateUpdateAPIView,  
@@ -38,6 +39,7 @@ urlpatterns = [
 	path('login/', obtain_jwt_token, name='login'),
 	path('register/', UserCreateAPIView.as_view(), name='register'),
 	path('profile/', ProfileDetailAPIView.as_view(), name='api-profile-detail'),
+	path('profile/<int:user_id>/update', ProfileUpdateAPIView.as_view(), name='api-profile-update'),
 	# Item Url
 	path('item/list/', ItemListAPIView.as_view(), name='api-item-list'),
 	path('item/create/', ItemCreateAPIView.as_view(), name='api-item-create'),

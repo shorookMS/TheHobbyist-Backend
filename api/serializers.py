@@ -96,21 +96,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
 # User Serializer 
 
-# class ProfileUpdateSerializer(serializers.ModelSerializer):
-#     password = serializers.CharField(write_only=True)
-#     user =  serializers.UserSerializer
-#     class Meta:
-#         model = Profile 
-#         fields = ['user','phoneNo', 'bio', 'birth_date', 'img']
-
-#     def create(self, validated_data):
-#         username = validated_data['username']
-#         password = validated_data['password']
-#         new_user = User(username=username)
-#         new_user.set_password(password)
-#         new_user.save()
-
-#         return validated_data
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile 
+        fields = ['phoneNo', 'bio', 'birth_date', 'img']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

@@ -40,7 +40,8 @@ from .serializers import (
 from .serializers import (
 	UserCreateSerializer,
 	UserLoginSerializer,
-	ProfileDetailViewSerializer
+	ProfileDetailViewSerializer,
+	ProfileUpdateSerializer
 
 	)
 
@@ -66,6 +67,13 @@ class UserLoginAPIView(APIView):
 			valid_data = serializer.data
 			return Response(valid_data, status=HTTP_200_OK)
 		return Response(serializer.errors, HTTP_400_BAD_REQUEST)
+
+class ProfileUpdateAPIView(RetrieveUpdateAPIView):
+	queryset = Profile.objects.all()
+	serializer_class = ProfileUpdateSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'user_id'
+	permission_classes = [IsAuthenticated,IsOwner]
 
 
 # class UserSignupAPIView(View):
@@ -308,7 +316,7 @@ class OrderItemDeleteAPIView(DestroyAPIView):
 	serializer_class = OrderItemListViewSerializer
 	lookup_field = 'id'
 	lookup_url_kwarg = 'orderitem_id'
-	permission_classes = [IsAuthenticated,IsItemUser]
+	permission_classes = [IsAuthenticated]
 
 class OrderItemQuantityUpdateAPIView(RetrieveUpdateAPIView):
 	queryset = OrderItem.objects.all()
